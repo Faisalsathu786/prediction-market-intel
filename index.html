@@ -913,7 +913,7 @@
 
   // Minimal ABI — only what we need
   const ABI = {
-    marketCount:        '0x4a74bb02',
+    marketCount:        '0xec979082',
     getMarket:          'function getMarket(uint256)',
     getImpliedProb:     '0x',
     placeBet:           '0x',
@@ -960,17 +960,20 @@
   // ─── Get single market ───
   async function fetchMarket(id) {
     // getMarket(uint256) selector = keccak256('getMarket(uint256)')[0:4]
-    const selector = '0x8825b7b4';
+    const selector = '0xeb44fdd3';
     const data = selector + encUint(id);
     const res  = await ethCall(CONTRACT_ADDRESS, data);
     if (!res || res === '0x') return null;
 
     // Decode: Market struct
     // id, creator, question(str), category(str), createdAt, deadline, state, result, yesPool, noPool, creatorFee
-    const hex = res.slice(2);
-    const id_     = decUint(hex.slice(0,   64));
-    const creator  = '0x' + hex.slice(64+24, 64+64);  // address (20 bytes, padded to 32)
-    // strings are dynamic — offset pointers at positions 2 and 3
+    // Skip first 32 bytes (tuple offset pointer = 0x20)
+    const raw = res.slice(2);
+    const hex = raw.slice(64); // skip the tuple offset word
+
+    const id_      = decUint(hex.slice(0,   64));
+    const creator  = '0x' + hex.slice(64 + 24, 64 + 64);
+    // String offsets are relative to start of struct data (after tuple offset)
     const q_off    = decUint(hex.slice(128, 192)) * 2;
     const c_off    = decUint(hex.slice(192, 256)) * 2;
     const createdAt= decUint(hex.slice(256, 320));
@@ -981,11 +984,13 @@
     const noPool   = decUint(hex.slice(576, 640));
     const creatorFee = decUint(hex.slice(640, 704));
 
-    // Decode string at offset
     const decStr = (off) => {
       const len = decUint(hex.slice(off, off + 64));
+      if (len === 0) return '';
       const str = hex.slice(off + 64, off + 64 + len * 2);
-      return decodeURIComponent(str.match(/.{2}/g).map(b => '%' + b).join(''));
+      try {
+        return decodeURIComponent(str.match(/.{2}/g).map(b => '%' + b).join(''));
+      } catch { return ''; }
     };
 
     const question = decStr(q_off);
@@ -997,7 +1002,7 @@
   // ─── Get implied probability ───
   async function fetchImpliedProb(id) {
     // getImpliedProbability(uint256) selector
-    const selector = '0x7e5d7a1a';
+    const selector = '0xecb62b6e';
     const data = selector + encUint(id);
     const res  = await ethCall(CONTRACT_ADDRESS, data);
     if (!res || res === '0x') return { yes: 50, no: 50 };
@@ -1148,7 +1153,7 @@
     try {
       // placeBet(uint256 marketId, Outcome outcome) — payable
       // Outcome: 1 = YES, 2 = NO
-      const selector = '0x7fc97e16'; // keccak256('placeBet(uint256,uint8)')[0:4]
+      const selector = '0x03edf914'; // keccak256('placeBet(uint256,uint8)')[0:4]
       const outcome  = activeBetSide === 'yes' ? 1 : 2;
       const data     = selector + encUint(activeBetMarket.id) + encUint(outcome);
 
