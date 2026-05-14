@@ -671,6 +671,56 @@
       border-color: var(--purple);
       color: var(--purple2);
     }
+
+    /* ─── Bet Buttons ─── */
+    .bet-btn-yes, .bet-btn-no {
+      flex: 1; padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; border: none;
+      transition: all 0.15s;
+    }
+    .bet-btn-yes {
+      background: rgba(16,185,129,0.15);
+      border: 1px solid rgba(16,185,129,0.3);
+      color: var(--green);
+    }
+    .bet-btn-yes:hover { background: rgba(16,185,129,0.28); }
+    .bet-btn-no {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: var(--red);
+    }
+    .bet-btn-no:hover { background: rgba(239,68,68,0.28); }
+
+    /* ─── Bet Side Selector ─── */
+    .bet-side-btn {
+      flex: 1; padding: 12px;
+      border-radius: 10px;
+      font-size: 0.88rem; font-weight: 700;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      transition: all 0.15s;
+      text-align: center;
+    }
+    .bet-side-btn.active {
+      border-color: var(--purple);
+      background: rgba(139,92,246,0.12);
+      color: var(--purple2);
+    }
+
+    /* ─── Empty State ─── */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px dashed var(--border);
+      border-radius: 16px;
+    }
   </style>
 </head>
 <body>
@@ -771,390 +821,85 @@
       <button class="filter-chip" onclick="setFilter('macro', this)">Macro</button>
     </div>
 
-    <!-- Markets -->
+    <!-- Markets Grid -->
     <div class="section-header">
       <div class="section-title">Markets</div>
+      <span style="font-size:0.72rem;color:var(--muted)" id="marketCountLabel"></span>
     </div>
-
     <div class="markets-grid" id="marketsGrid">
-
-      <div class="market-card" data-cat="politics">
-        <div class="market-top">
-          <span class="market-category politics">Politics</span>
-          <span class="market-volume">Vol $48.2M</span>
-        </div>
-        <div class="market-title">Will Trump sign a crypto bill before end of 2025?</div>
-        <div class="prob-row">
-          <span class="prob-label">Yes</span>
-          <div class="prob-bar-wrap"><div class="prob-bar yes" style="width:68%"></div></div>
-          <span class="prob-pct up">68%</span>
-        </div>
-        <div class="prob-row">
-          <span class="prob-label">No</span>
-          <div class="prob-bar-wrap"><div class="prob-bar no" style="width:32%"></div></div>
-          <span class="prob-pct down">32%</span>
-        </div>
-        <div class="edge-row">
-          <span class="edge-badge edge-high">High Edge</span>
-          <span class="edge-value">Ref: 74% · Gap +6%</span>
-        </div>
-      </div>
-
-      <div class="market-card" data-cat="crypto">
-        <div class="market-top">
-          <span class="market-category crypto">Crypto</span>
-          <span class="market-volume">Vol $31.7M</span>
-        </div>
-        <div class="market-title">Will BTC hit $100K before July 2025?</div>
-        <div class="prob-row">
-          <span class="prob-label">Yes</span>
-          <div class="prob-bar-wrap"><div class="prob-bar yes" style="width:41%"></div></div>
-          <span class="prob-pct up">41%</span>
-        </div>
-        <div class="prob-row">
-          <span class="prob-label">No</span>
-          <div class="prob-bar-wrap"><div class="prob-bar no" style="width:59%"></div></div>
-          <span class="prob-pct down">59%</span>
-        </div>
-        <div class="edge-row">
-          <span class="edge-badge edge-medium">Medium Edge</span>
-          <span class="edge-value">Ref: 48% · Gap +7%</span>
-        </div>
-      </div>
-
-      <div class="market-card" data-cat="macro">
-        <div class="market-top">
-          <span class="market-category macro">Macro</span>
-          <span class="market-volume">Vol $22.1M</span>
-        </div>
-        <div class="market-title">Fed cuts rates at June 2025 FOMC meeting?</div>
-        <div class="prob-row">
-          <span class="prob-label">Yes</span>
-          <div class="prob-bar-wrap"><div class="prob-bar yes" style="width:28%"></div></div>
-          <span class="prob-pct up">28%</span>
-        </div>
-        <div class="prob-row">
-          <span class="prob-label">No</span>
-          <div class="prob-bar-wrap"><div class="prob-bar no" style="width:72%"></div></div>
-          <span class="prob-pct down">72%</span>
-        </div>
-        <div class="edge-row">
-          <span class="edge-badge edge-low">Low Edge</span>
-          <span class="edge-value">Ref: 30% · Gap +2%</span>
-        </div>
-      </div>
-
-      <div class="market-card" data-cat="politics">
-        <div class="market-top">
-          <span class="market-category politics">Politics</span>
-          <span class="market-volume">Vol $89.4M</span>
-        </div>
-        <div class="market-title">Will there be a US-China trade deal in 2025?</div>
-        <div class="prob-row">
-          <span class="prob-label">Yes</span>
-          <div class="prob-bar-wrap"><div class="prob-bar yes" style="width:55%"></div></div>
-          <span class="prob-pct up">55%</span>
-        </div>
-        <div class="prob-row">
-          <span class="prob-label">No</span>
-          <div class="prob-bar-wrap"><div class="prob-bar no" style="width:45%"></div></div>
-          <span class="prob-pct down">45%</span>
-        </div>
-        <div class="edge-row">
-          <span class="edge-badge edge-high">High Edge</span>
-          <span class="edge-value">Ref: 63% · Gap +8%</span>
-        </div>
-      </div>
-
-      <div class="market-card" data-cat="sports">
-        <div class="market-top">
-          <span class="market-category sports">Sports</span>
-          <span class="market-volume">Vol $14.8M</span>
-        </div>
-        <div class="market-title">Will Man City win Premier League 2024–25?</div>
-        <div class="prob-row">
-          <span class="prob-label">Yes</span>
-          <div class="prob-bar-wrap"><div class="prob-bar yes" style="width:34%"></div></div>
-          <span class="prob-pct up">34%</span>
-        </div>
-        <div class="prob-row">
-          <span class="prob-label">No</span>
-          <div class="prob-bar-wrap"><div class="prob-bar no" style="width:66%"></div></div>
-          <span class="prob-pct down">66%</span>
-        </div>
-        <div class="edge-row">
-          <span class="edge-badge edge-medium">Medium Edge</span>
-          <span class="edge-value">Ref: 39% · Gap +5%</span>
-        </div>
-      </div>
-
-      <div class="market-card" data-cat="crypto">
-        <div class="market-top">
-          <span class="market-category crypto">Crypto</span>
-          <span class="market-volume">Vol $19.3M</span>
-        </div>
-        <div class="market-title">Will ETH flip BTC market cap in 2025?</div>
-        <div class="prob-row">
-          <span class="prob-label">Yes</span>
-          <div class="prob-bar-wrap"><div class="prob-bar yes" style="width:12%"></div></div>
-          <span class="prob-pct up">12%</span>
-        </div>
-        <div class="prob-row">
-          <span class="prob-label">No</span>
-          <div class="prob-bar-wrap"><div class="prob-bar no" style="width:88%"></div></div>
-          <span class="prob-pct down">88%</span>
-        </div>
-        <div class="edge-row">
-          <span class="edge-badge edge-low">Low Edge</span>
-          <span class="edge-value">Ref: 10% · Gap −2%</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Mispricing Table -->
-    <div class="section-header">
-      <div class="section-title">Odds Comparison</div>
-    </div>
-
-    <div class="table-wrap">
-      <div class="table-header-row">
-        <div class="th">Market</div>
-        <div class="th">Market %</div>
-        <div class="th">Reference %</div>
-        <div class="th">Gap</div>
-        <div class="th">Action</div>
-      </div>
-      <div class="table-row">
-        <div class="td name"><span class="cat-dot dot-politics"></span>Trump crypto bill 2025</div>
-        <div class="td">68%</div>
-        <div class="td">74%</div>
-        <div class="td gap-positive">+6%</div>
-        <div class="td"><button class="action-btn">BUY YES</button></div>
-      </div>
-      <div class="table-row">
-        <div class="td name"><span class="cat-dot dot-politics"></span>US-China trade deal</div>
-        <div class="td">55%</div>
-        <div class="td">63%</div>
-        <div class="td gap-positive">+8%</div>
-        <div class="td"><button class="action-btn">BUY YES</button></div>
-      </div>
-      <div class="table-row">
-        <div class="td name"><span class="cat-dot dot-crypto"></span>BTC $100K before July</div>
-        <div class="td">41%</div>
-        <div class="td">48%</div>
-        <div class="td gap-positive">+7%</div>
-        <div class="td"><button class="action-btn">BUY YES</button></div>
-      </div>
-      <div class="table-row">
-        <div class="td name"><span class="cat-dot dot-sports"></span>Man City PL win</div>
-        <div class="td">34%</div>
-        <div class="td">39%</div>
-        <div class="td gap-positive">+5%</div>
-        <div class="td"><button class="action-btn">BUY YES</button></div>
-      </div>
-      <div class="table-row">
-        <div class="td name"><span class="cat-dot dot-crypto"></span>ETH flips BTC market cap</div>
-        <div class="td">12%</div>
-        <div class="td">10%</div>
-        <div class="td gap-negative">−2%</div>
-        <div class="td"><button class="action-btn">BUY NO</button></div>
-      </div>
-      <div class="table-row">
-        <div class="td name"><span class="cat-dot dot-macro"></span>Fed June rate cut</div>
-        <div class="td">28%</div>
-        <div class="td">30%</div>
-        <div class="td gap-positive">+2%</div>
-        <div class="td"><button class="action-btn">WATCH</button></div>
+      <div class="empty-state" id="emptyState">
+        <div style="font-size:2rem;margin-bottom:10px">🏁</div>
+        <div style="font-weight:600;margin-bottom:4px">No markets yet</div>
+        <div style="font-size:0.8rem;color:var(--muted)">Be the first to create a market on-chain</div>
       </div>
     </div>
 
-    <!-- Signal Feed + Sidebar -->
-    <div class="two-col">
+    <!-- Bet Modal -->
+    <div class="modal-overlay" id="betModal">
+      <div class="modal" style="max-width:420px">
+        <div class="modal-title" id="betModalTitle">Place a Bet</div>
+        <div class="modal-sub" id="betModalQuestion" style="margin-bottom:16px;font-size:0.88rem;color:var(--text);font-weight:500"></div>
 
-      <!-- Signal Feed -->
-      <div>
-        <div class="section-header">
-          <div class="section-title">Recent Activity</div>
+        <div style="display:flex;gap:10px;margin-bottom:18px">
+          <button class="bet-side-btn active" id="betYesBtn" onclick="selectSide('yes')">
+            YES
+            <span style="font-size:0.72rem;font-weight:400;display:block;margin-top:2px" id="betYesPct">—</span>
+          </button>
+          <button class="bet-side-btn" id="betNoBtn" onclick="selectSide('no')">
+            NO
+            <span style="font-size:0.72rem;font-weight:400;display:block;margin-top:2px" id="betNoPct">—</span>
+          </button>
         </div>
-        <div class="feed-wrap">
-          <div class="feed-item">
-            <div class="feed-icon bull">🟢</div>
-            <div class="feed-content">
-              <div class="feed-title">Trump crypto bill: odds jumped +8% in 2h</div>
-              <div class="feed-meta">
-                <span class="feed-tag tag-opportunity">Opportunity</span>
-                <span>Polymarket · Politics</span>
-              </div>
-            </div>
-            <div class="feed-right">
-              <span class="feed-pct up">+8%</span>
-              <span class="feed-time">Block #48291</span>
-            </div>
-          </div>
 
-          <div class="feed-item">
-            <div class="feed-icon alert">⚠️</div>
-            <div class="feed-content">
-              <div class="feed-title">BTC $100K: Unusual volume spike detected</div>
-              <div class="feed-meta">
-                <span class="feed-tag tag-anomaly">Anomaly</span>
-                <span>Kalshi · Crypto</span>
-              </div>
-            </div>
-            <div class="feed-right">
-              <span class="feed-pct gold">3.2x vol</span>
-              <span class="feed-time">Block #48187</span>
-            </div>
-          </div>
+        <div style="margin-bottom:18px">
+          <label style="font-size:0.75rem;color:var(--muted);display:block;margin-bottom:6px">Amount (USDC)</label>
+          <input id="betAmount" type="number" min="0.000001" step="0.01" placeholder="e.g. 1.00"
+            style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:0.9rem;outline:none" />
+        </div>
 
-          <div class="feed-item">
-            <div class="feed-icon info">🔵</div>
-            <div class="feed-content">
-              <div class="feed-title">Fed June cut: probability shifted post-CPI</div>
-              <div class="feed-meta">
-                <span class="feed-tag tag-shift">Shift</span>
-                <span>Polymarket · Macro</span>
-              </div>
-            </div>
-            <div class="feed-right">
-              <span class="feed-pct down">−4%</span>
-              <span class="feed-time">Block #48043</span>
-            </div>
-          </div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:18px" id="betInfo">Your USDC balance: —</div>
 
-          <div class="feed-item">
-            <div class="feed-icon bull">🟢</div>
-            <div class="feed-content">
-              <div class="feed-title">US-China deal: new divergence vs bookmakers</div>
-              <div class="feed-meta">
-                <span class="feed-tag tag-opportunity">Opportunity</span>
-                <span>Polymarket · Politics</span>
-              </div>
-            </div>
-            <div class="feed-right">
-              <span class="feed-pct up">+8% gap</span>
-              <span class="feed-time">Block #47891</span>
-            </div>
-          </div>
-
-          <div class="feed-item">
-            <div class="feed-icon bear">🔴</div>
-            <div class="feed-content">
-              <div class="feed-title">ETH flip: odds diverged from reference</div>
-              <div class="feed-meta">
-                <span class="feed-tag tag-anomaly">Anomaly</span>
-                <span>Polymarket · Crypto</span>
-              </div>
-            </div>
-            <div class="feed-right">
-              <span class="feed-pct down">−2% gap</span>
-              <span class="feed-time">Block #47720</span>
-            </div>
-          </div>
+        <div class="modal-actions">
+          <button class="modal-btn primary" id="betConfirmBtn" onclick="confirmBet()">Confirm Bet</button>
+          <button class="modal-btn secondary" onclick="closeBetModal()">Cancel</button>
         </div>
       </div>
+    </div>
 
-      <!-- Right Column -->
-      <div style="display:flex; flex-direction:column; gap:14px;">
-
-        <!-- Sentiment Gauge -->
-        <div class="mini-card">
-          <div class="mini-card-title">Sentiment</div>
-          <div class="gauge-wrap">
-            <div class="gauge-arc">
-              <svg viewBox="0 0 140 70" width="140" height="70">
-                <defs>
-                  <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%"   stop-color="#ef4444"/>
-                    <stop offset="50%"  stop-color="#f59e0b"/>
-                    <stop offset="100%" stop-color="#10b981"/>
-                  </linearGradient>
-                </defs>
-                <!-- Background arc -->
-                <path d="M 10 65 A 60 60 0 0 1 130 65" fill="none" stroke="#1e2130" stroke-width="12" stroke-linecap="round"/>
-                <!-- Colored arc (62% fill) -->
-                <path d="M 10 65 A 60 60 0 0 1 130 65" fill="none" stroke="url(#arcGrad)" stroke-width="12"
-                      stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="72"/>
-                <!-- Needle -->
-                <line x1="70" y1="65" x2="102" y2="28" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="70" cy="65" r="5" fill="white"/>
-              </svg>
-            </div>
-            <div class="gauge-value gold">62</div>
-            <div class="gauge-label">Bullish Lean</div>
-            <div class="gauge-markers">
-              <span>Fear</span><span>Neutral</span><span>Greed</span>
-            </div>
-          </div>
+    <!-- Recent Activity -->
+    <div class="section-header" style="margin-top:8px">
+      <div class="section-title">Recent Activity</div>
+    </div>
+    <div class="feed-wrap" id="recentActivity">
+      <div class="feed-item">
+        <div class="feed-content">
+          <div style="color:var(--muted);font-size:0.82rem">No bets placed yet.</div>
         </div>
-
-        <!-- Top Wallets -->
-        <div class="mini-card">
-          <div class="mini-card-title">Top Traders (30d)</div>
-          <div class="lb-row">
-            <div class="lb-rank gold-rank">1</div>
-            <div class="lb-name">0x4f3a...2a9</div>
-            <div class="lb-vol">42 bets</div>
-            <div class="lb-roi">+41.2%</div>
-          </div>
-          <div class="lb-row">
-            <div class="lb-rank silver-rank">2</div>
-            <div class="lb-name">0x8c12...f44</div>
-            <div class="lb-vol">31 bets</div>
-            <div class="lb-roi">+38.7%</div>
-          </div>
-          <div class="lb-row">
-            <div class="lb-rank bronze-rank">3</div>
-            <div class="lb-name">0x1d9e...b71</div>
-            <div class="lb-vol">28 bets</div>
-            <div class="lb-roi">+31.4%</div>
-          </div>
-          <div class="lb-row">
-            <div class="lb-rank">4</div>
-            <div class="lb-name">0x7a2f...c98</div>
-            <div class="lb-vol">19 bets</div>
-            <div class="lb-roi up">+28.1%</div>
-          </div>
-          <div class="lb-row">
-            <div class="lb-rank">5</div>
-            <div class="lb-name">0x3b5e...d23</div>
-            <div class="lb-vol">14 bets</div>
-            <div class="lb-roi up">+24.6%</div>
-          </div>
-        </div>
-
       </div>
     </div>
 
   </main>
-
   <footer>
     Built by <strong>Crypto Coach</strong> · Arc Testnet &nbsp;·&nbsp;
-    <a href="#">GitHub</a> &nbsp;·&nbsp;
-    Arc Testnet · Chain ID 5042002
+    <a href="https://github.com/Faisalsathu786/prediction-market-intel" target="_blank">GitHub</a>
   </footer>
 
 </div>
 
 <script>
-  // ─── Filter Logic ───
+  // ─── Filter ───
   let currentFilter = 'all';
-
   function setFilter(cat, el) {
     currentFilter = cat;
     document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
     filterMarkets(document.querySelector('.search-input').value);
   }
-
   function filterMarkets(query) {
     const q = query.toLowerCase();
     document.querySelectorAll('.market-card').forEach(card => {
-      const cat  = card.dataset.cat;
-      const text = card.innerText.toLowerCase();
-      const catOk  = currentFilter === 'all' || cat === currentFilter;
-      const textOk = !q || text.includes(q);
+      const catOk  = currentFilter === 'all' || card.dataset.cat === currentFilter;
+      const textOk = !q || card.innerText.toLowerCase().includes(q);
       card.style.display = catOk && textOk ? '' : 'none';
     });
   }
@@ -1166,7 +911,276 @@
   const CONTRACT_ADDRESS = '0x482C48F200036514429eFcE07175a1B650d7534c';
   const ARC_EXPLORER     = 'https://testnet.arcscan.app';
 
+  // Minimal ABI — only what we need
+  const ABI = {
+    marketCount:        '0x4a74bb02',
+    getMarket:          'function getMarket(uint256)',
+    getImpliedProb:     '0x',
+    placeBet:           '0x',
+  };
+
   let walletAddress = null;
+  let allMarkets    = [];
+  let activeBetMarket = null;
+  let activeBetSide   = 'yes';
+
+  // ─── RPC helper ───
+  async function rpcCall(method, params = []) {
+    const r = await fetch(ARC_RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params })
+    });
+    const d = await r.json();
+    if (d.error) throw new Error(d.error.message);
+    return d.result;
+  }
+
+  // ─── eth_call helper ───
+  async function ethCall(to, data) {
+    return rpcCall('eth_call', [{ to, data }, 'latest']);
+  }
+
+  // ─── Encode uint256 ───
+  function encUint(n) {
+    return BigInt(n).toString(16).padStart(64, '0');
+  }
+
+  // ─── Decode uint256 from hex ───
+  function decUint(hex) {
+    return parseInt(hex, 16);
+  }
+
+  // ─── Get market count ───
+  async function getMarketCount() {
+    const res = await ethCall(CONTRACT_ADDRESS, '0x4a74bb02'); // marketCount()
+    return decUint(res);
+  }
+
+  // ─── Get single market ───
+  async function fetchMarket(id) {
+    // getMarket(uint256) selector = keccak256('getMarket(uint256)')[0:4]
+    const selector = '0x8825b7b4';
+    const data = selector + encUint(id);
+    const res  = await ethCall(CONTRACT_ADDRESS, data);
+    if (!res || res === '0x') return null;
+
+    // Decode: Market struct
+    // id, creator, question(str), category(str), createdAt, deadline, state, result, yesPool, noPool, creatorFee
+    const hex = res.slice(2);
+    const id_     = decUint(hex.slice(0,   64));
+    const creator  = '0x' + hex.slice(64+24, 64+64);  // address (20 bytes, padded to 32)
+    // strings are dynamic — offset pointers at positions 2 and 3
+    const q_off    = decUint(hex.slice(128, 192)) * 2;
+    const c_off    = decUint(hex.slice(192, 256)) * 2;
+    const createdAt= decUint(hex.slice(256, 320));
+    const deadline = decUint(hex.slice(320, 384));
+    const state    = decUint(hex.slice(384, 448));
+    const result   = decUint(hex.slice(448, 512));
+    const yesPool  = decUint(hex.slice(512, 576));
+    const noPool   = decUint(hex.slice(576, 640));
+    const creatorFee = decUint(hex.slice(640, 704));
+
+    // Decode string at offset
+    const decStr = (off) => {
+      const len = decUint(hex.slice(off, off + 64));
+      const str = hex.slice(off + 64, off + 64 + len * 2);
+      return decodeURIComponent(str.match(/.{2}/g).map(b => '%' + b).join(''));
+    };
+
+    const question = decStr(q_off);
+    const category = decStr(c_off);
+
+    return { id: id_, creator, question, category, createdAt, deadline, state, result, yesPool, noPool, creatorFee };
+  }
+
+  // ─── Get implied probability ───
+  async function fetchImpliedProb(id) {
+    // getImpliedProbability(uint256) selector
+    const selector = '0x7e5d7a1a';
+    const data = selector + encUint(id);
+    const res  = await ethCall(CONTRACT_ADDRESS, data);
+    if (!res || res === '0x') return { yes: 50, no: 50 };
+    const hex = res.slice(2);
+    const yesBps = decUint(hex.slice(0,  64));
+    const noBps  = decUint(hex.slice(64, 128));
+    return { yes: (yesBps / 100).toFixed(0), no: (noBps / 100).toFixed(0) };
+  }
+
+  // ─── Load all markets from chain ───
+  async function loadMarkets() {
+    document.getElementById('marketCountLabel').textContent = 'Loading...';
+    try {
+      const count = await getMarketCount();
+      document.getElementById('statMarkets').textContent = count;
+      document.getElementById('marketCountLabel').textContent = count + ' total';
+
+      if (count === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        document.getElementById('statVolume').textContent = '0 USDC';
+        document.getElementById('statBets').textContent   = '0';
+        return;
+      }
+
+      document.getElementById('emptyState').style.display = 'none';
+      const grid = document.getElementById('marketsGrid');
+
+      let totalVolume = 0n;
+      let totalBets   = 0;
+      allMarkets = [];
+
+      for (let i = 1; i <= count; i++) {
+        const m = await fetchMarket(i);
+        if (!m) continue;
+        allMarkets.push(m);
+
+        const prob = await fetchImpliedProb(i);
+        const vol  = m.yesPool + m.noPool; // in 6-decimal USDC units
+        totalVolume += BigInt(vol);
+        const betCount = vol > 0 ? '—' : 0;
+
+        const isOpen   = m.state === 0;
+        const isClosed = m.state === 1;
+        const isResolved = m.state === 2;
+        const statusLabel = isOpen ? 'Open' : isClosed ? 'Closed' : 'Resolved';
+        const statusColor = isOpen ? 'var(--green)' : isClosed ? 'var(--gold)' : 'var(--muted)';
+
+        const yesPool = (m.yesPool / 1e6).toFixed(2);
+        const noPool  = (m.noPool  / 1e6).toFixed(2);
+        const totalVol = ((m.yesPool + m.noPool) / 1e6).toFixed(2);
+
+        const deadline = new Date(m.deadline * 1000);
+        const deadlineStr = deadline < new Date() ? 'Ended' : deadline.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+
+        const card = document.createElement('div');
+        card.className = 'market-card';
+        card.dataset.cat = m.category.toLowerCase();
+        card.dataset.mid = m.id;
+        card.innerHTML = `
+          <div class="market-top">
+            <span class="market-category ${m.category.toLowerCase()}">${m.category}</span>
+            <span class="market-volume">${totalVol} USDC</span>
+          </div>
+          <div class="market-title">${m.question}</div>
+          <div class="prob-row">
+            <span class="prob-label">Yes</span>
+            <div class="prob-bar-wrap"><div class="prob-bar yes" style="width:${prob.yes}%"></div></div>
+            <span class="prob-pct up">${prob.yes}%</span>
+          </div>
+          <div class="prob-row">
+            <span class="prob-label">No</span>
+            <div class="prob-bar-wrap"><div class="prob-bar no" style="width:${prob.no}%"></div></div>
+            <span class="prob-pct down">${prob.no}%</span>
+          </div>
+          <div class="edge-row">
+            <span style="font-size:0.72rem;color:${statusColor};font-weight:600">${statusLabel} · ${deadlineStr}</span>
+            <span style="font-size:0.75rem;color:var(--muted)">YES ${yesPool} · NO ${noPool}</span>
+          </div>
+          ${isOpen ? `<div style="display:flex;gap:8px;margin-top:14px">
+            <button class="bet-btn-yes" onclick="openBetModal(${m.id},'yes')">Bet YES</button>
+            <button class="bet-btn-no"  onclick="openBetModal(${m.id},'no')">Bet NO</button>
+          </div>` : ''}
+        `;
+        grid.appendChild(card);
+        totalBets++;
+      }
+
+      document.getElementById('statVolume').textContent = (Number(totalVolume) / 1e6).toFixed(2) + ' USDC';
+      document.getElementById('statBets').textContent   = totalBets;
+
+    } catch (err) {
+      console.error('loadMarkets error:', err);
+      document.getElementById('marketCountLabel').textContent = 'Error loading';
+    }
+  }
+
+  // ─── Bet Modal ───
+  function openBetModal(marketId, side) {
+    if (!walletAddress) {
+      showToast('Connect wallet first', 'error');
+      handleWalletClick();
+      return;
+    }
+    const m = allMarkets.find(x => x.id === marketId);
+    if (!m) return;
+
+    activeBetMarket = m;
+    activeBetSide   = side;
+
+    document.getElementById('betModalTitle').textContent    = 'Place a Bet';
+    document.getElementById('betModalQuestion').textContent = m.question;
+
+    fetchImpliedProb(marketId).then(p => {
+      document.getElementById('betYesPct').textContent = p.yes + '%';
+      document.getElementById('betNoPct').textContent  = p.no  + '%';
+    });
+
+    selectSide(side);
+
+    fetchBalance(walletAddress).then(b => {
+      document.getElementById('betInfo').textContent = 'Your balance: ' + b + ' USDC';
+    }).catch(() => {});
+
+    document.getElementById('betAmount').value = '';
+    document.getElementById('betModal').classList.add('open');
+  }
+
+  function closeBetModal() {
+    document.getElementById('betModal').classList.remove('open');
+  }
+
+  function selectSide(side) {
+    activeBetSide = side;
+    document.getElementById('betYesBtn').classList.toggle('active', side === 'yes');
+    document.getElementById('betNoBtn').classList.toggle('active', side === 'no');
+  }
+
+  async function confirmBet() {
+    if (!walletAddress || !activeBetMarket) return;
+
+    const amount = parseFloat(document.getElementById('betAmount').value);
+    if (!amount || amount <= 0) { showToast('Enter an amount', 'error'); return; }
+
+    const btn = document.getElementById('betConfirmBtn');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+
+    try {
+      // placeBet(uint256 marketId, Outcome outcome) — payable
+      // Outcome: 1 = YES, 2 = NO
+      const selector = '0x7fc97e16'; // keccak256('placeBet(uint256,uint8)')[0:4]
+      const outcome  = activeBetSide === 'yes' ? 1 : 2;
+      const data     = selector + encUint(activeBetMarket.id) + encUint(outcome);
+
+      // Convert USDC amount to 6-decimal wei
+      const valueHex = '0x' + BigInt(Math.round(amount * 1e6)).toString(16);
+
+      const txHash = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{
+          from:  walletAddress,
+          to:    CONTRACT_ADDRESS,
+          data:  data,
+          value: valueHex,
+        }]
+      });
+
+      closeBetModal();
+      showToast('Bet sent! Tx: ' + txHash.slice(0,10) + '...', 'success');
+      setTimeout(loadMarkets, 3000); // reload after 3s
+
+    } catch (err) {
+      if (err.code === 4001) showToast('Cancelled', 'error');
+      else showToast('Tx failed', 'error');
+    } finally {
+      btn.textContent = 'Confirm Bet';
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById('betModal').addEventListener('click', function(e) {
+    if (e.target === this) closeBetModal();
+  });
 
   // ─── Modal open/close ───
   function handleWalletClick() {
@@ -1213,17 +1227,15 @@
 
     const switchBtn = document.querySelector('#modalActionsConnected .modal-btn.primary');
     if (switchBtn) {
-      switchBtn.textContent  = onArc ? 'On Arc Testnet' : 'Switch to Arc';
-      switchBtn.disabled     = onArc;
+      switchBtn.textContent   = onArc ? 'On Arc Testnet' : 'Switch to Arc';
+      switchBtn.disabled      = onArc;
       switchBtn.style.opacity = onArc ? '0.5' : '1';
     }
 
     if (onArc) {
       fetchBalance(addr).then(b => {
         document.getElementById('modalBalance').textContent = b + ' USDC';
-      }).catch(() => {
-        document.getElementById('modalBalance').textContent = '—';
-      });
+      }).catch(() => { document.getElementById('modalBalance').textContent = '—'; });
     }
   }
 
@@ -1238,7 +1250,6 @@
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       walletAddress  = accounts[0];
       const chainId  = await window.ethereum.request({ method: 'eth_chainId' });
-
       if (parseInt(chainId, 16) !== ARC_CHAIN_ID_DEC) {
         await addOrSwitchArc();
       } else {
@@ -1251,33 +1262,27 @@
     }
   }
 
-  // ─── Add or switch to Arc ───
   async function addOrSwitchArc() {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ARC_CHAIN_ID }],
       });
-      // chainChanged event will fire — handler below picks it up
     } catch (e) {
       if (e.code === 4902 || e.code === -32603) {
         try {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [{
-              chainId:         ARC_CHAIN_ID,
-              chainName:       'Arc Testnet',
-              nativeCurrency:  { name: 'USDC', symbol: 'USDC', decimals: 6 },
-              rpcUrls:         [ARC_RPC],
-              blockExplorerUrls: [ARC_EXPLORER],
+              chainId: ARC_CHAIN_ID, chainName: 'Arc Testnet',
+              nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+              rpcUrls: [ARC_RPC], blockExplorerUrls: [ARC_EXPLORER],
             }],
           });
-          // chainChanged fires after add+switch — handler below picks it up
         } catch (addErr) {
           if (addErr.code !== 4001) showToast('Could not add Arc network', 'error');
         }
       } else if (e.code === 4001) {
-        // User said no — still show them as connected (wrong network)
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
         renderWallet(walletAddress, chainId);
         showToast('Switch to Arc to continue', 'error');
@@ -1285,13 +1290,11 @@
     }
   }
 
-  // ─── Switch to Arc (called from modal button) ───
   async function switchToArc() {
     if (!window.ethereum) return;
     await addOrSwitchArc();
   }
 
-  // ─── Disconnect ───
   function disconnectWallet() {
     walletAddress = null;
     renderWallet(null, null);
@@ -1299,33 +1302,26 @@
     showToast('Disconnected', 'success');
   }
 
-  // ─── Copy address ───
   function copyAddress() {
     if (!walletAddress) return;
     navigator.clipboard.writeText(walletAddress);
     showToast('Copied', 'success');
   }
 
-  // ─── Balance ───
   async function fetchBalance(addr) {
     const r = await fetch(ARC_RPC, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc:'2.0', id:1, method:'eth_getBalance', params:[addr,'latest'] })
     });
     const d = await r.json();
     return (parseInt(d.result, 16) / 1e6).toFixed(2);
   }
 
-  // ─── MetaMask event listeners ───
   if (window.ethereum) {
     window.ethereum.on('accountsChanged', (accounts) => {
       walletAddress = accounts[0] || null;
-      if (!walletAddress) {
-        renderWallet(null, null);
-      } else {
-        window.ethereum.request({ method: 'eth_chainId' }).then(c => renderWallet(walletAddress, c));
-      }
+      if (!walletAddress) renderWallet(null, null);
+      else window.ethereum.request({ method: 'eth_chainId' }).then(c => renderWallet(walletAddress, c));
     });
     window.ethereum.on('chainChanged', (chainId) => {
       if (walletAddress) {
@@ -1335,7 +1331,7 @@
     });
   }
 
-  // ─── Toast helper ───
+  // ─── Toast ───
   function showToast(msg, type = 'success') {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -1345,23 +1341,21 @@
     setTimeout(() => t.classList.remove('show'), 2800);
   }
 
-  // old listeners removed — new ones are in the MetaMask block above
-
-
-
-  // ─── Refresh live timestamp badge ───
+  // ─── Live clock ───
   function updateTime() {
     const badge = document.querySelector('.live-badge');
-    if (badge) {
-      const now = new Date();
-      const h = String(now.getUTCHours()).padStart(2,'0');
-      const m = String(now.getUTCMinutes()).padStart(2,'0');
-      const s = String(now.getUTCSeconds()).padStart(2,'0');
-      badge.innerHTML = `<div class="live-dot"></div> ${h}:${m}:${s} UTC`;
-    }
+    if (!badge) return;
+    const now = new Date();
+    const h = String(now.getUTCHours()).padStart(2,'0');
+    const m = String(now.getUTCMinutes()).padStart(2,'0');
+    const s = String(now.getUTCSeconds()).padStart(2,'0');
+    badge.innerHTML = `<div class="live-dot"></div> ${h}:${m}:${s} UTC`;
   }
   setInterval(updateTime, 1000);
   updateTime();
+
+  // ─── Boot ───
+  loadMarkets();
 </script>
 </body>
 </html>
