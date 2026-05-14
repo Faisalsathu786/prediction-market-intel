@@ -79,6 +79,148 @@
       font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
     }
 
+    /* ─── Wallet Button ─── */
+    .wallet-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 0.8rem; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .wallet-btn:hover { border-color: var(--purple); background: rgba(139,92,246,0.1); }
+    .wallet-btn.connected {
+      border-color: rgba(16,185,129,0.4);
+      background: rgba(16,185,129,0.08);
+      color: var(--green);
+    }
+    .wallet-btn .wallet-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--muted);
+    }
+    .wallet-btn.connected .wallet-dot { background: var(--green); }
+
+    /* ─── Wallet Modal ─── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      width: 100%; max-width: 400px;
+      transform: translateY(16px);
+      transition: transform 0.2s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal-title {
+      font-size: 1.1rem; font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .modal-sub {
+      font-size: 0.78rem; color: var(--muted);
+      margin-bottom: 20px; line-height: 1.5;
+    }
+
+    .network-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(93,191,255,0.1);
+      border: 1px solid rgba(93,191,255,0.25);
+      color: #5fbfff;
+      padding: 4px 10px; border-radius: 8px;
+      font-size: 0.72rem; font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .modal-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.82rem;
+    }
+    .modal-row:last-of-type { border-bottom: none; }
+    .modal-row .label { color: var(--muted); }
+    .modal-row .value { font-weight: 600; font-family: monospace; font-size: 0.78rem; }
+    .modal-row .value.copy-val { cursor: pointer; }
+    .modal-row .value.copy-val:hover { color: var(--purple2); }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+    .modal-btn {
+      flex: 1; padding: 10px;
+      border-radius: 10px;
+      font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; border: none;
+      transition: all 0.15s;
+    }
+    .modal-btn.primary {
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: white;
+    }
+    .modal-btn.primary:hover { opacity: 0.9; }
+    .modal-btn.danger {
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171;
+    }
+    .modal-btn.danger:hover { background: rgba(239,68,68,0.22); }
+    .modal-btn.secondary {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--sm);
+    }
+    .modal-btn.secondary:hover { border-color: var(--purple); color: var(--purple2); }
+
+    /* ─── Toast ─── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--card); border: 1px solid var(--border);
+      padding: 10px 20px; border-radius: 12px;
+      font-size: 0.82rem; font-weight: 500;
+      z-index: 300; transition: transform 0.3s ease;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: rgba(16,185,129,0.4); color: var(--green); }
+    .toast.error   { border-color: rgba(239,68,68,0.4);   color: #f87171; }
+
+    /* ─── Arc Banner ─── */
+    .arc-banner {
+      display: flex; align-items: center; gap: 12px;
+      background: linear-gradient(135deg, rgba(93,191,255,0.08), rgba(139,92,246,0.08));
+      border: 1px solid rgba(93,191,255,0.2);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+    }
+    .arc-banner-icon { font-size: 1.4rem; }
+    .arc-banner-text { flex: 1; }
+    .arc-banner-title { font-size: 0.88rem; font-weight: 700; color: #5fbfff; margin-bottom: 2px; }
+    .arc-banner-sub   { font-size: 0.74rem; color: var(--muted); }
+    .arc-banner-link {
+      font-size: 0.72rem; font-weight: 600;
+      color: #5fbfff; text-decoration: none;
+      padding: 5px 12px; border-radius: 8px;
+      border: 1px solid rgba(93,191,255,0.3);
+      background: rgba(93,191,255,0.08);
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .arc-banner-link:hover { background: rgba(93,191,255,0.18); }
+
     .live-dot {
       width: 7px; height: 7px;
       background: var(--green);
@@ -550,16 +692,70 @@
       <div class="logo-icon">🔮</div>
       Prediction Market <span>&nbsp;Intel</span>
     </div>
-    <div class="header-right">
+    <div class="header-right" id="headerRight">
       <div class="live-badge">
         <div class="live-dot"></div>
         Live
       </div>
+      <button class="wallet-btn" id="walletBtn" onclick="handleWalletClick()">
+        <span class="wallet-dot"></span>
+        <span id="walletLabel">Connect Wallet</span>
+      </button>
     </div>
   </header>
 
+  <!-- ─── Wallet Modal ─── -->
+  <div class="modal-overlay" id="walletModal">
+    <div class="modal">
+      <div class="modal-title" id="modalTitle">🦊 Connect to Arc Testnet</div>
+      <div class="modal-sub" id="modalSub">Connect MetaMask to interact with Arc Testnet — stablecoin-native L1 with USDC as gas.</div>
+      <div class="network-badge">⚡ Arc Testnet · Chain ID 5042002</div>
+
+      <div id="modalConnected" style="display:none">
+        <div class="modal-row">
+          <span class="label">Wallet</span>
+          <span class="value copy-val" id="modalAddress" onclick="copyAddress()">—</span>
+        </div>
+        <div class="modal-row">
+          <span class="label">Network</span>
+          <span class="value" id="modalNetwork" style="color:#5fbfff">—</span>
+        </div>
+        <div class="modal-row">
+          <span class="label">USDC Balance</span>
+          <span class="value" id="modalBalance">—</span>
+        </div>
+        <div class="modal-row">
+          <span class="label">Explorer</span>
+          <a id="modalExplorer" href="#" target="_blank" style="color:var(--purple2);font-size:0.78rem">View on ArcScan →</a>
+        </div>
+      </div>
+
+      <div class="modal-actions" id="modalActions">
+        <button class="modal-btn primary" onclick="connectWallet()">🦊 Connect MetaMask</button>
+        <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+      </div>
+      <div class="modal-actions" id="modalActionsConnected" style="display:none">
+        <button class="modal-btn primary" onclick="switchToArc()">🔄 Switch to Arc</button>
+        <button class="modal-btn danger" onclick="disconnectWallet()">Disconnect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Toast ─── -->
+  <div class="toast" id="toast"></div>
+
   <!-- ─── Main Content ─── -->
   <main>
+
+    <!-- Arc Banner -->
+    <div class="arc-banner" id="arcBanner">
+      <div class="arc-banner-icon">🔮</div>
+      <div class="arc-banner-text">
+        <div class="arc-banner-title">Building on Arc Testnet</div>
+        <div class="arc-banner-sub">EVM-compatible L1 · USDC as gas · Sub-second finality · Chain ID 5042002</div>
+      </div>
+      <a class="arc-banner-link" href="https://faucet.circle.com" target="_blank">🚰 Get USDC</a>
+    </div>
 
     <!-- Stats Row -->
     <div class="stats-grid">
@@ -980,6 +1176,175 @@
       const catOk  = currentFilter === 'all' || cat === currentFilter;
       const textOk = !q || text.includes(q);
       card.style.display = catOk && textOk ? '' : 'none';
+    });
+  }
+
+  // ─── Arc Testnet Config ───
+  const ARC_CHAIN_ID     = '0x4CCED2';  // 5042002 in hex
+  const ARC_CHAIN_ID_DEC = 5042002;
+  const ARC_RPC          = 'https://rpc.testnet.arc.network';
+  const ARC_EXPLORER     = 'https://testnet.arcscan.app';
+
+  let walletAddress = null;
+  let walletConnected = false;
+
+  // ─── Handle wallet button click ───
+  function handleWalletClick() {
+    document.getElementById('walletModal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('walletModal').classList.remove('open');
+  }
+
+  // Close on overlay click
+  document.getElementById('walletModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  // ─── Connect MetaMask ───
+  async function connectWallet() {
+    if (typeof window.ethereum === 'undefined') {
+      showToast('MetaMask not found! Please install it.', 'error');
+      setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1500);
+      return;
+    }
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      walletAddress = accounts[0];
+      walletConnected = true;
+      await switchToArc();
+      updateWalletUI();
+      showToast('✅ Wallet connected!', 'success');
+    } catch (err) {
+      showToast('Connection rejected.', 'error');
+    }
+  }
+
+  // ─── Switch / Add Arc Testnet ───
+  async function switchToArc() {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ARC_CHAIN_ID }],
+      });
+    } catch (switchError) {
+      // Chain not added yet — add it
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: ARC_CHAIN_ID,
+              chainName: 'Arc Testnet',
+              nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
+              rpcUrls: [ARC_RPC],
+              blockExplorerUrls: [ARC_EXPLORER],
+            }],
+          });
+          showToast('✅ Arc Testnet added to MetaMask!', 'success');
+        } catch (addErr) {
+          showToast('Failed to add Arc network.', 'error');
+        }
+      }
+    }
+    await updateWalletUI();
+  }
+
+  // ─── Update UI after connect ───
+  async function updateWalletUI() {
+    if (!walletAddress) return;
+
+    // Short address
+    const short = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+    document.getElementById('walletLabel').textContent = short;
+    document.getElementById('walletBtn').classList.add('connected');
+
+    // Check chain
+    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+    const onArc = parseInt(chainId, 16) === ARC_CHAIN_ID_DEC;
+    const networkLabel = onArc ? '✅ Arc Testnet' : '⚠️ Wrong Network';
+
+    // Modal update
+    document.getElementById('modalTitle').textContent = '🟢 Wallet Connected';
+    document.getElementById('modalSub').textContent   = 'You are connected to Arc Testnet.';
+    document.getElementById('modalAddress').textContent = short;
+    document.getElementById('modalNetwork').textContent = networkLabel;
+    document.getElementById('modalBalance').textContent = 'Fetching...';
+    document.getElementById('modalExplorer').href = ARC_EXPLORER + '/address/' + walletAddress;
+    document.getElementById('modalConnected').style.display = 'block';
+    document.getElementById('modalActions').style.display = 'none';
+    document.getElementById('modalActionsConnected').style.display = 'flex';
+
+    // Try fetch USDC balance via eth_call (ERC-20 balanceOf)
+    try {
+      const bal = await fetchUSDCBalance(walletAddress);
+      document.getElementById('modalBalance').textContent = bal + ' USDC';
+    } catch { document.getElementById('modalBalance').textContent = 'N/A'; }
+  }
+
+  // ─── USDC balance (native on Arc = address(0) or query JSON-RPC) ───
+  async function fetchUSDCBalance(addr) {
+    // Arc: USDC is the native currency — use eth_getBalance
+    const res = await fetch(ARC_RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0', id: 1,
+        method: 'eth_getBalance',
+        params: [addr, 'latest']
+      })
+    });
+    const data = await res.json();
+    const wei = parseInt(data.result, 16);
+    // USDC on Arc has 6 decimals
+    return (wei / 1e6).toFixed(2);
+  }
+
+  // ─── Disconnect ───
+  function disconnectWallet() {
+    walletAddress = null;
+    walletConnected = false;
+    document.getElementById('walletLabel').textContent = 'Connect Wallet';
+    document.getElementById('walletBtn').classList.remove('connected');
+    document.getElementById('modalTitle').textContent = '🦊 Connect to Arc Testnet';
+    document.getElementById('modalSub').textContent   = 'Connect MetaMask to interact with Arc Testnet — stablecoin-native L1 with USDC as gas.';
+    document.getElementById('modalConnected').style.display = 'none';
+    document.getElementById('modalActions').style.display = 'flex';
+    document.getElementById('modalActionsConnected').style.display = 'none';
+    closeModal();
+    showToast('Wallet disconnected.', 'success');
+  }
+
+  // ─── Copy address ───
+  function copyAddress() {
+    if (!walletAddress) return;
+    navigator.clipboard.writeText(walletAddress);
+    showToast('Address copied!', 'success');
+  }
+
+  // ─── Toast helper ───
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    void t.offsetWidth;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ─── Listen for account/chain changes ───
+  if (typeof window.ethereum !== 'undefined') {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      if (accounts.length === 0) {
+        disconnectWallet();
+      } else {
+        walletAddress = accounts[0];
+        updateWalletUI();
+      }
+    });
+    window.ethereum.on('chainChanged', () => {
+      if (walletConnected) updateWalletUI();
     });
   }
 
