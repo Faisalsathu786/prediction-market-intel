@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prediction Market Intelligence</title>
+  <title>Prediction Markets</title>
   <style>
     /* ─── Reset & Base ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,10 +60,10 @@
 
     .logo-icon {
       width: 34px; height: 34px;
-      background: linear-gradient(135deg, var(--purple), var(--blue));
-      border-radius: 10px;
+      background: var(--purple);
+      border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1rem;
+      font-size: 0.65rem; font-weight: 800; color: white; letter-spacing: -0.5px;
     }
 
     .logo span { color: var(--purple2); }
@@ -76,7 +76,7 @@
       border: 1px solid rgba(16,185,129,0.25);
       color: var(--green);
       padding: 5px 12px; border-radius: 20px;
-      font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      font-size: 0.72rem; font-weight: 600;
     }
 
     /* ─── Wallet Button ─── */
@@ -167,7 +167,7 @@
       transition: all 0.15s;
     }
     .modal-btn.primary {
-      background: linear-gradient(135deg, var(--purple), var(--blue));
+      background: var(--purple);
       color: white;
     }
     .modal-btn.primary:hover { opacity: 0.9; }
@@ -272,7 +272,7 @@
       transition: border-color 0.2s;
     }
 
-    .stat-card:hover { border-color: var(--purple); }
+    .stat-card:hover { border-color: rgba(255,255,255,0.1); }
 
     .stat-label {
       font-size: 0.72rem; color: var(--muted);
@@ -315,17 +315,7 @@
       overflow: hidden;
     }
 
-    .market-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--purple), var(--blue));
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-
-    .market-card:hover { border-color: var(--purple); transform: translateY(-2px); }
-    .market-card:hover::before { opacity: 1; }
+    .market-card:hover { border-color: rgba(139,92,246,0.4); }
 
     .market-top {
       display: flex; align-items: flex-start;
@@ -376,8 +366,8 @@
       transition: width 0.6s ease;
     }
 
-    .prob-bar.yes { background: linear-gradient(90deg, var(--green), #34d399); }
-    .prob-bar.no  { background: linear-gradient(90deg, var(--red), #f87171); }
+    .prob-bar.yes { background: var(--green); }
+    .prob-bar.no  { background: var(--red); }
 
     .prob-pct {
       font-size: 0.8rem; font-weight: 700;
@@ -689,8 +679,8 @@
   <!-- ─── Header ─── -->
   <header>
     <div class="logo">
-      <div class="logo-icon">🔮</div>
-      Prediction Market <span>&nbsp;Intel</span>
+      <div class="logo-icon">PM</div>
+      Prediction <span>Markets</span>
     </div>
     <div class="header-right" id="headerRight">
       <div class="live-badge">
@@ -707,9 +697,9 @@
   <!-- ─── Wallet Modal ─── -->
   <div class="modal-overlay" id="walletModal">
     <div class="modal">
-      <div class="modal-title" id="modalTitle">🦊 Connect to Arc Testnet</div>
-      <div class="modal-sub" id="modalSub">Connect MetaMask to interact with Arc Testnet — stablecoin-native L1 with USDC as gas.</div>
-      <div class="network-badge">⚡ Arc Testnet · Chain ID 5042002</div>
+      <div class="modal-title" id="modalTitle">Connect Wallet</div>
+      <div class="modal-sub" id="modalSub">Connect your MetaMask wallet to interact with Arc Testnet.</div>
+      <div class="network-badge">Arc Testnet &middot; Chain ID 5042002</div>
 
       <div id="modalConnected" style="display:none">
         <div class="modal-row">
@@ -731,11 +721,11 @@
       </div>
 
       <div class="modal-actions" id="modalActions">
-        <button class="modal-btn primary" onclick="connectWallet()">🦊 Connect MetaMask</button>
+        <button class="modal-btn primary" onclick="connectWallet()">Connect MetaMask</button>
         <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
       </div>
       <div class="modal-actions" id="modalActionsConnected" style="display:none">
-        <button class="modal-btn primary" onclick="switchToArc()">🔄 Switch to Arc</button>
+        <button class="modal-btn primary" onclick="switchToArc()">Switch to Arc</button>
         <button class="modal-btn danger" onclick="disconnectWallet()">Disconnect</button>
       </div>
     </div>
@@ -747,53 +737,43 @@
   <!-- ─── Main Content ─── -->
   <main>
 
-    <!-- Arc Banner -->
-    <div class="arc-banner" id="arcBanner">
-      <div class="arc-banner-icon">🔮</div>
-      <div class="arc-banner-text">
-        <div class="arc-banner-title">Building on Arc Testnet</div>
-        <div class="arc-banner-sub">EVM-compatible L1 · USDC as gas · Sub-second finality · Chain ID 5042002 · Contract: <code style='font-size:0.65rem;color:#a78bfa'>0x482C48F200036514429eFcE07175a1B650d7534c</code></div>
-      </div>
-      <a class="arc-banner-link" href="https://faucet.circle.com" target="_blank">🚰 Get USDC</a>
-    </div>
-
     <!-- Stats Row -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">Total Volume (24h)</div>
-        <div class="stat-value up">$2.84B</div>
-        <div class="stat-sub">↑ 12.4% vs yesterday</div>
+        <div class="stat-label">Total Volume</div>
+        <div class="stat-value up" id="statVolume">—</div>
+        <div class="stat-sub" id="statVolumeSub">Loading...</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Active Markets</div>
-        <div class="stat-value purple">4,291</div>
-        <div class="stat-sub">Across 6 platforms</div>
+        <div class="stat-label">Open Markets</div>
+        <div class="stat-value purple" id="statMarkets">—</div>
+        <div class="stat-sub" id="statMarketsSub">On-chain</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Mispricing Signals</div>
-        <div class="stat-value gold">18</div>
-        <div class="stat-sub">High edge opportunities</div>
+        <div class="stat-label">Total Bets</div>
+        <div class="stat-value gold" id="statBets">—</div>
+        <div class="stat-sub">YES + NO combined</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Avg Confidence</div>
-        <div class="stat-value">72<span style="font-size:1rem;color:var(--muted)">%</span></div>
-        <div class="stat-sub">AI consensus score</div>
+        <div class="stat-label">Contract</div>
+        <div class="stat-value" style="font-size:0.72rem;font-family:monospace;color:var(--purple2)" id="statContract">0x482C...534c</div>
+        <div class="stat-sub"><a href="https://testnet.arcscan.app/address/0x482C48F200036514429eFcE07175a1B650d7534c" target="_blank" style="color:var(--muted);text-decoration:none">View on ArcScan →</a></div>
       </div>
     </div>
 
     <!-- Filter Bar -->
     <div class="filter-bar">
-      <input class="search-input" type="text" placeholder="🔍  Search markets..." oninput="filterMarkets(this.value)" />
+      <input class="search-input" type="text" placeholder="Search markets..." oninput="filterMarkets(this.value)" />
       <button class="filter-chip active" onclick="setFilter('all', this)">All</button>
-      <button class="filter-chip" onclick="setFilter('politics', this)">🏛 Politics</button>
-      <button class="filter-chip" onclick="setFilter('crypto', this)">₿ Crypto</button>
-      <button class="filter-chip" onclick="setFilter('sports', this)">⚽ Sports</button>
-      <button class="filter-chip" onclick="setFilter('macro', this)">📈 Macro</button>
+      <button class="filter-chip" onclick="setFilter('politics', this)">Politics</button>
+      <button class="filter-chip" onclick="setFilter('crypto', this)">Crypto</button>
+      <button class="filter-chip" onclick="setFilter('sports', this)">Sports</button>
+      <button class="filter-chip" onclick="setFilter('macro', this)">Macro</button>
     </div>
 
     <!-- Markets -->
     <div class="section-header">
-      <div class="section-title">🔥 Hot Markets</div>
+      <div class="section-title">Markets</div>
     </div>
 
     <div class="markets-grid" id="marketsGrid">
@@ -816,7 +796,7 @@
         </div>
         <div class="edge-row">
           <span class="edge-badge edge-high">High Edge</span>
-          <span class="edge-value">AI: 74% · Gap +6%</span>
+          <span class="edge-value">Ref: 74% · Gap +6%</span>
         </div>
       </div>
 
@@ -838,7 +818,7 @@
         </div>
         <div class="edge-row">
           <span class="edge-badge edge-medium">Medium Edge</span>
-          <span class="edge-value">AI: 48% · Gap +7%</span>
+          <span class="edge-value">Ref: 48% · Gap +7%</span>
         </div>
       </div>
 
@@ -860,7 +840,7 @@
         </div>
         <div class="edge-row">
           <span class="edge-badge edge-low">Low Edge</span>
-          <span class="edge-value">AI: 30% · Gap +2%</span>
+          <span class="edge-value">Ref: 30% · Gap +2%</span>
         </div>
       </div>
 
@@ -882,7 +862,7 @@
         </div>
         <div class="edge-row">
           <span class="edge-badge edge-high">High Edge</span>
-          <span class="edge-value">AI: 63% · Gap +8%</span>
+          <span class="edge-value">Ref: 63% · Gap +8%</span>
         </div>
       </div>
 
@@ -904,7 +884,7 @@
         </div>
         <div class="edge-row">
           <span class="edge-badge edge-medium">Medium Edge</span>
-          <span class="edge-value">AI: 39% · Gap +5%</span>
+          <span class="edge-value">Ref: 39% · Gap +5%</span>
         </div>
       </div>
 
@@ -926,7 +906,7 @@
         </div>
         <div class="edge-row">
           <span class="edge-badge edge-low">Low Edge</span>
-          <span class="edge-value">AI: 10% · Gap −2%</span>
+          <span class="edge-value">Ref: 10% · Gap −2%</span>
         </div>
       </div>
 
@@ -934,14 +914,14 @@
 
     <!-- Mispricing Table -->
     <div class="section-header">
-      <div class="section-title">⚡ Mispricing Detector</div>
+      <div class="section-title">Odds Comparison</div>
     </div>
 
     <div class="table-wrap">
       <div class="table-header-row">
         <div class="th">Market</div>
         <div class="th">Market %</div>
-        <div class="th">AI Model %</div>
+        <div class="th">Reference %</div>
         <div class="th">Gap</div>
         <div class="th">Action</div>
       </div>
@@ -995,7 +975,7 @@
       <!-- Signal Feed -->
       <div>
         <div class="section-header">
-          <div class="section-title">📡 Signal Feed</div>
+          <div class="section-title">Recent Activity</div>
         </div>
         <div class="feed-wrap">
           <div class="feed-item">
@@ -1009,7 +989,7 @@
             </div>
             <div class="feed-right">
               <span class="feed-pct up">+8%</span>
-              <span class="feed-time">14m ago</span>
+              <span class="feed-time">Block #48291</span>
             </div>
           </div>
 
@@ -1024,7 +1004,7 @@
             </div>
             <div class="feed-right">
               <span class="feed-pct gold">3.2x vol</span>
-              <span class="feed-time">38m ago</span>
+              <span class="feed-time">Block #48187</span>
             </div>
           </div>
 
@@ -1039,7 +1019,7 @@
             </div>
             <div class="feed-right">
               <span class="feed-pct down">−4%</span>
-              <span class="feed-time">1h ago</span>
+              <span class="feed-time">Block #48043</span>
             </div>
           </div>
 
@@ -1054,14 +1034,14 @@
             </div>
             <div class="feed-right">
               <span class="feed-pct up">+8% gap</span>
-              <span class="feed-time">2h ago</span>
+              <span class="feed-time">Block #47891</span>
             </div>
           </div>
 
           <div class="feed-item">
             <div class="feed-icon bear">🔴</div>
             <div class="feed-content">
-              <div class="feed-title">ETH flip: AI model disagrees with market</div>
+              <div class="feed-title">ETH flip: odds diverged from reference</div>
               <div class="feed-meta">
                 <span class="feed-tag tag-anomaly">Anomaly</span>
                 <span>Polymarket · Crypto</span>
@@ -1069,7 +1049,7 @@
             </div>
             <div class="feed-right">
               <span class="feed-pct down">−2% gap</span>
-              <span class="feed-time">3h ago</span>
+              <span class="feed-time">Block #47720</span>
             </div>
           </div>
         </div>
@@ -1080,7 +1060,7 @@
 
         <!-- Sentiment Gauge -->
         <div class="mini-card">
-          <div class="mini-card-title">🌡 Market Sentiment</div>
+          <div class="mini-card-title">Sentiment</div>
           <div class="gauge-wrap">
             <div class="gauge-arc">
               <svg viewBox="0 0 140 70" width="140" height="70">
@@ -1111,35 +1091,35 @@
 
         <!-- Top Wallets -->
         <div class="mini-card">
-          <div class="mini-card-title">🏆 Top Forecasters (30d)</div>
+          <div class="mini-card-title">Top Traders (30d)</div>
           <div class="lb-row">
             <div class="lb-rank gold-rank">1</div>
-            <div class="lb-name">whale_0x4f…2a9</div>
-            <div class="lb-vol">$2.1M vol</div>
+            <div class="lb-name">0x4f3a...2a9</div>
+            <div class="lb-vol">42 bets</div>
             <div class="lb-roi">+41.2%</div>
           </div>
           <div class="lb-row">
             <div class="lb-rank silver-rank">2</div>
-            <div class="lb-name">alphahunter</div>
-            <div class="lb-vol">$890K vol</div>
+            <div class="lb-name">0x8c12...f44</div>
+            <div class="lb-vol">31 bets</div>
             <div class="lb-roi">+38.7%</div>
           </div>
           <div class="lb-row">
             <div class="lb-rank bronze-rank">3</div>
-            <div class="lb-name">polybot_v3</div>
-            <div class="lb-vol">$1.4M vol</div>
+            <div class="lb-name">0x1d9e...b71</div>
+            <div class="lb-vol">28 bets</div>
             <div class="lb-roi">+31.4%</div>
           </div>
           <div class="lb-row">
             <div class="lb-rank">4</div>
-            <div class="lb-name">macro_mind</div>
-            <div class="lb-vol">$450K vol</div>
+            <div class="lb-name">0x7a2f...c98</div>
+            <div class="lb-vol">19 bets</div>
             <div class="lb-roi up">+28.1%</div>
           </div>
           <div class="lb-row">
             <div class="lb-rank">5</div>
-            <div class="lb-name">geopolsignal</div>
-            <div class="lb-vol">$320K vol</div>
+            <div class="lb-name">0x3b5e...d23</div>
+            <div class="lb-vol">14 bets</div>
             <div class="lb-roi up">+24.6%</div>
           </div>
         </div>
@@ -1150,9 +1130,9 @@
   </main>
 
   <footer>
-    Built by <strong>Crypto Coach</strong> · Powered by Polymarket, Kalshi, AI consensus &nbsp;·&nbsp;
+    Built by <strong>Crypto Coach</strong> · Arc Testnet &nbsp;·&nbsp;
     <a href="#">GitHub</a> &nbsp;·&nbsp;
-    Data is illustrative — connect live APIs for real-time accuracy
+    Arc Testnet · Chain ID 5042002
   </footer>
 
 </div>
@@ -1206,7 +1186,7 @@
   // ─── Connect MetaMask ───
   async function connectWallet() {
     if (typeof window.ethereum === 'undefined') {
-      showToast('MetaMask not found! Please install it.', 'error');
+      showToast('MetaMask not installed', 'error');
       setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1500);
       return;
     }
@@ -1224,13 +1204,13 @@
       } else {
         // Already on Arc — skip prompt, go straight to UI update
         await updateWalletUI();
-        showToast('✅ Wallet connected!', 'success');
+        showToast('Connected', 'success');
       }
     } catch (err) {
       if (err.code === 4001) {
-        showToast('Connection rejected.', 'error');
+        showToast('Rejected', 'error');
       } else {
-        showToast('Something went wrong. Try again.', 'error');
+        showToast('Failed — try again', 'error');
       }
     }
   }
@@ -1246,7 +1226,7 @@
       // Switch succeeded — update UI
       await updateWalletUI();
       if (walletConnected) showToast('✅ Wallet connected!', 'success');
-      else showToast('✅ Switched to Arc Testnet!', 'success');
+      else showToast('Switched to Arc', 'success');
     } catch (switchError) {
       if (switchError.code === 4902 || switchError.code === -32603) {
         // Chain not added yet — add it first
@@ -1263,18 +1243,18 @@
           });
           // After adding, MetaMask auto-switches — update UI
           await updateWalletUI();
-          showToast('✅ Arc Testnet added & connected!', 'success');
+          showToast('Arc Testnet added', 'success');
         } catch (addErr) {
           if (addErr.code !== 4001) {
-            showToast('Failed to add Arc network.', 'error');
+            showToast('Could not add Arc network', 'error');
           }
         }
       } else if (switchError.code === 4001) {
         // User rejected the switch — still show wallet as connected on wrong network
         await updateWalletUI();
-        showToast('⚠️ Wallet connected but on wrong network.', 'error');
+        showToast('Wrong network — switch to Arc', 'error');
       } else {
-        showToast('Network switch failed. Try manually.', 'error');
+        showToast('Switch failed', 'error');
       }
     }
   }
@@ -1294,7 +1274,7 @@
     const networkLabel = onArc ? '✅ Arc Testnet' : '⚠️ Wrong Network';
 
     // Modal update
-    document.getElementById('modalTitle').textContent = onArc ? '🟢 Wallet Connected' : '⚠️ Wrong Network';
+    document.getElementById('modalTitle').textContent = onArc ? 'Connected' : 'Wrong Network';
     document.getElementById('modalSub').textContent   = onArc
       ? 'You are connected to Arc Testnet — ready to go!'
       : 'Switch to Arc Testnet to use this app.';
@@ -1349,20 +1329,20 @@
     walletConnected = false;
     document.getElementById('walletLabel').textContent = 'Connect Wallet';
     document.getElementById('walletBtn').classList.remove('connected');
-    document.getElementById('modalTitle').textContent = '🦊 Connect to Arc Testnet';
-    document.getElementById('modalSub').textContent   = 'Connect MetaMask to interact with Arc Testnet — stablecoin-native L1 with USDC as gas.';
+    document.getElementById('modalTitle').textContent = 'Connect Wallet';
+    document.getElementById('modalSub').textContent = 'Connect your MetaMask wallet to interact with Arc Testnet.';
     document.getElementById('modalConnected').style.display = 'none';
     document.getElementById('modalActions').style.display = 'flex';
     document.getElementById('modalActionsConnected').style.display = 'none';
     closeModal();
-    showToast('Wallet disconnected.', 'success');
+    showToast('Disconnected', 'success');
   }
 
   // ─── Copy address ───
   function copyAddress() {
     if (!walletAddress) return;
     navigator.clipboard.writeText(walletAddress);
-    showToast('Address copied!', 'success');
+    showToast('Copied', 'success');
   }
 
   // ─── Toast helper ───
@@ -1390,27 +1370,7 @@
     });
   }
 
-  // ─── Simulate live probability drift ───
-  function drift() {
-    document.querySelectorAll('.market-card').forEach(card => {
-      const bars = card.querySelectorAll('.prob-bar.yes');
-      const pcts = card.querySelectorAll('.prob-pct');
-      bars.forEach((bar, i) => {
-        const current = parseInt(bar.style.width);
-        const delta = (Math.random() - 0.5) * 1.5;
-        const next = Math.min(95, Math.max(5, current + delta));
-        bar.style.width = next + '%';
-        if (pcts[i * 2]) pcts[i * 2].textContent = Math.round(next) + '%';
-        const noBar = card.querySelectorAll('.prob-bar.no')[i];
-        if (noBar) {
-          noBar.style.width = (100 - next) + '%';
-          if (pcts[i * 2 + 1]) pcts[i * 2 + 1].textContent = Math.round(100 - next) + '%';
-        }
-      });
-    });
-  }
 
-  setInterval(drift, 3000);
 
   // ─── Refresh live timestamp badge ───
   function updateTime() {
