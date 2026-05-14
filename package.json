@@ -1,0 +1,29 @@
+{
+  "name": "prediction-market-intel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js --network arc_testnet",
+    "node": "hardhat node",
+    "coverage": "hardhat coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Faisalsathu786/prediction-market-intel.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Faisalsathu786/prediction-market-intel/issues"
+  },
+  "homepage": "https://github.com/Faisalsathu786/prediction-market-intel#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^17.4.2",
+    "hardhat": "^2.28.6"
+  }
+}
