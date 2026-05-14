@@ -1159,181 +1159,142 @@
     });
   }
 
-  // ─── Arc Testnet Config ───
-  const ARC_CHAIN_ID     = '0x4cef52';  // 5042002 in hex (verified via eth_chainId)
+  // ─── Arc Config ───
+  const ARC_CHAIN_ID     = '0x4cef52';
   const ARC_CHAIN_ID_DEC = 5042002;
   const ARC_RPC          = 'https://rpc.testnet.arc.network';
   const CONTRACT_ADDRESS = '0x482C48F200036514429eFcE07175a1B650d7534c';
   const ARC_EXPLORER     = 'https://testnet.arcscan.app';
 
   let walletAddress = null;
-  let walletConnected = false;
 
-  // ─── Handle wallet button click ───
+  // ─── Modal open/close ───
   function handleWalletClick() {
     document.getElementById('walletModal').classList.add('open');
   }
-
   function closeModal() {
     document.getElementById('walletModal').classList.remove('open');
   }
-
-  // Close on overlay click
   document.getElementById('walletModal').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
 
-  // ─── Connect MetaMask ───
+  // ─── Render wallet state ───
+  function renderWallet(addr, chainId) {
+    const onArc  = parseInt(chainId, 16) === ARC_CHAIN_ID_DEC;
+    const short  = addr ? addr.slice(0, 6) + '...' + addr.slice(-4) : '';
+    const btn    = document.getElementById('walletBtn');
+    const label  = document.getElementById('walletLabel');
+    const dot    = btn.querySelector('.wallet-dot');
+
+    label.textContent = addr ? short : 'Connect Wallet';
+    btn.classList.toggle('connected', !!addr);
+    dot.style.background = !addr ? 'var(--muted)' : onArc ? 'var(--green)' : 'var(--gold)';
+
+    if (!addr) {
+      document.getElementById('modalTitle').textContent = 'Connect Wallet';
+      document.getElementById('modalSub').textContent   = 'Connect your MetaMask wallet to interact with Arc Testnet.';
+      document.getElementById('modalConnected').style.display        = 'none';
+      document.getElementById('modalActions').style.display          = 'flex';
+      document.getElementById('modalActionsConnected').style.display = 'none';
+      return;
+    }
+
+    document.getElementById('modalTitle').textContent   = onArc ? 'Connected' : 'Wrong Network';
+    document.getElementById('modalSub').textContent     = onArc ? 'Arc Testnet — ready to go' : 'Switch to Arc Testnet to continue';
+    document.getElementById('modalAddress').textContent = short;
+    document.getElementById('modalNetwork').textContent = onArc ? 'Arc Testnet' : 'Wrong network';
+    document.getElementById('modalNetwork').style.color = onArc ? 'var(--green)' : 'var(--gold)';
+    document.getElementById('modalBalance').textContent = onArc ? 'Loading...' : '—';
+    document.getElementById('modalExplorer').href       = ARC_EXPLORER + '/address/' + addr;
+    document.getElementById('modalConnected').style.display        = 'block';
+    document.getElementById('modalActions').style.display          = 'none';
+    document.getElementById('modalActionsConnected').style.display = 'flex';
+
+    const switchBtn = document.querySelector('#modalActionsConnected .modal-btn.primary');
+    if (switchBtn) {
+      switchBtn.textContent  = onArc ? 'On Arc Testnet' : 'Switch to Arc';
+      switchBtn.disabled     = onArc;
+      switchBtn.style.opacity = onArc ? '0.5' : '1';
+    }
+
+    if (onArc) {
+      fetchBalance(addr).then(b => {
+        document.getElementById('modalBalance').textContent = b + ' USDC';
+      }).catch(() => {
+        document.getElementById('modalBalance').textContent = '—';
+      });
+    }
+  }
+
+  // ─── Connect ───
   async function connectWallet() {
-    if (typeof window.ethereum === 'undefined') {
+    if (!window.ethereum) {
       showToast('MetaMask not installed', 'error');
-      setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1500);
+      setTimeout(() => window.open('https://metamask.io/download/', '_blank'), 1200);
       return;
     }
     try {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      walletAddress = accounts[0];
-      walletConnected = true;
+      walletAddress  = accounts[0];
+      const chainId  = await window.ethereum.request({ method: 'eth_chainId' });
 
-      // Check current chain — only switch/add if NOT already on Arc
-      const currentChain = await window.ethereum.request({ method: 'eth_chainId' });
-      const alreadyOnArc = parseInt(currentChain, 16) === ARC_CHAIN_ID_DEC;
-
-      if (!alreadyOnArc) {
-        await switchToArc();
+      if (parseInt(chainId, 16) !== ARC_CHAIN_ID_DEC) {
+        await addOrSwitchArc();
       } else {
-        // Already on Arc — skip prompt, go straight to UI update
-        await updateWalletUI();
+        renderWallet(walletAddress, chainId);
         showToast('Connected', 'success');
       }
-    } catch (err) {
-      if (err.code === 4001) {
-        showToast('Rejected', 'error');
-      } else {
-        showToast('Failed — try again', 'error');
-      }
+    } catch (e) {
+      if (e.code === 4001) showToast('Cancelled', 'error');
+      else showToast('Something went wrong', 'error');
     }
   }
 
-  // ─── Switch / Add Arc Testnet ───
-  async function switchToArc() {
+  // ─── Add or switch to Arc ───
+  async function addOrSwitchArc() {
     try {
-      // Try switching — works if chain already added
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ARC_CHAIN_ID }],
       });
-      // Switch succeeded — update UI
-      await updateWalletUI();
-      if (walletConnected) showToast('✅ Wallet connected!', 'success');
-      else showToast('Switched to Arc', 'success');
-    } catch (switchError) {
-      if (switchError.code === 4902 || switchError.code === -32603) {
-        // Chain not added yet — add it first
+      // chainChanged event will fire — handler below picks it up
+    } catch (e) {
+      if (e.code === 4902 || e.code === -32603) {
         try {
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [{
-              chainId: ARC_CHAIN_ID,
-              chainName: 'Arc Testnet',
-              nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 6 },
-              rpcUrls: [ARC_RPC],
+              chainId:         ARC_CHAIN_ID,
+              chainName:       'Arc Testnet',
+              nativeCurrency:  { name: 'USDC', symbol: 'USDC', decimals: 6 },
+              rpcUrls:         [ARC_RPC],
               blockExplorerUrls: [ARC_EXPLORER],
             }],
           });
-          // After adding, MetaMask auto-switches — update UI
-          await updateWalletUI();
-          showToast('Arc Testnet added', 'success');
+          // chainChanged fires after add+switch — handler below picks it up
         } catch (addErr) {
-          if (addErr.code !== 4001) {
-            showToast('Could not add Arc network', 'error');
-          }
+          if (addErr.code !== 4001) showToast('Could not add Arc network', 'error');
         }
-      } else if (switchError.code === 4001) {
-        // User rejected the switch — still show wallet as connected on wrong network
-        await updateWalletUI();
-        showToast('Wrong network — switch to Arc', 'error');
-      } else {
-        showToast('Switch failed', 'error');
+      } else if (e.code === 4001) {
+        // User said no — still show them as connected (wrong network)
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+        renderWallet(walletAddress, chainId);
+        showToast('Switch to Arc to continue', 'error');
       }
     }
   }
 
-  // ─── Update UI after connect ───
-  async function updateWalletUI() {
-    if (!walletAddress) return;
-
-    // Short address
-    const short = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
-    document.getElementById('walletLabel').textContent = short;
-    document.getElementById('walletBtn').classList.add('connected');
-
-    // Check chain
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-    const onArc = parseInt(chainId, 16) === ARC_CHAIN_ID_DEC;
-    const networkLabel = onArc ? '✅ Arc Testnet' : '⚠️ Wrong Network';
-
-    // Modal update
-    document.getElementById('modalTitle').textContent = onArc ? 'Connected' : 'Wrong Network';
-    document.getElementById('modalSub').textContent   = onArc
-      ? 'You are connected to Arc Testnet — ready to go!'
-      : 'Switch to Arc Testnet to use this app.';
-    document.getElementById('modalAddress').textContent = short;
-    document.getElementById('modalNetwork').textContent = networkLabel;
-    document.getElementById('modalBalance').textContent = onArc ? 'Fetching...' : 'N/A';
-    document.getElementById('modalExplorer').href = ARC_EXPLORER + '/address/' + walletAddress;
-    document.getElementById('modalConnected').style.display = 'block';
-    document.getElementById('modalActions').style.display = 'none';
-    document.getElementById('modalActionsConnected').style.display = 'flex';
-
-    // Update Switch button label based on state
-    const switchBtn = document.querySelector('#modalActionsConnected .modal-btn.primary');
-    if (switchBtn) {
-      switchBtn.textContent = onArc ? '✅ On Arc Testnet' : '🔄 Switch to Arc Testnet';
-      switchBtn.disabled = onArc;
-      switchBtn.style.opacity = onArc ? '0.5' : '1';
-    }
-
-    // Update header button dot color
-    document.querySelector('#walletBtn .wallet-dot').style.background =
-      onArc ? 'var(--green)' : 'var(--gold)';
-
-    // Try fetch USDC balance via eth_call (ERC-20 balanceOf)
-    try {
-      const bal = await fetchUSDCBalance(walletAddress);
-      document.getElementById('modalBalance').textContent = bal + ' USDC';
-    } catch { document.getElementById('modalBalance').textContent = 'N/A'; }
-  }
-
-  // ─── USDC balance (native on Arc = address(0) or query JSON-RPC) ───
-  async function fetchUSDCBalance(addr) {
-    // Arc: USDC is the native currency — use eth_getBalance
-    const res = await fetch(ARC_RPC, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0', id: 1,
-        method: 'eth_getBalance',
-        params: [addr, 'latest']
-      })
-    });
-    const data = await res.json();
-    const wei = parseInt(data.result, 16);
-    // USDC on Arc has 6 decimals
-    return (wei / 1e6).toFixed(2);
+  // ─── Switch to Arc (called from modal button) ───
+  async function switchToArc() {
+    if (!window.ethereum) return;
+    await addOrSwitchArc();
   }
 
   // ─── Disconnect ───
   function disconnectWallet() {
     walletAddress = null;
-    walletConnected = false;
-    document.getElementById('walletLabel').textContent = 'Connect Wallet';
-    document.getElementById('walletBtn').classList.remove('connected');
-    document.getElementById('modalTitle').textContent = 'Connect Wallet';
-    document.getElementById('modalSub').textContent = 'Connect your MetaMask wallet to interact with Arc Testnet.';
-    document.getElementById('modalConnected').style.display = 'none';
-    document.getElementById('modalActions').style.display = 'flex';
-    document.getElementById('modalActionsConnected').style.display = 'none';
+    renderWallet(null, null);
     closeModal();
     showToast('Disconnected', 'success');
   }
@@ -1343,6 +1304,35 @@
     if (!walletAddress) return;
     navigator.clipboard.writeText(walletAddress);
     showToast('Copied', 'success');
+  }
+
+  // ─── Balance ───
+  async function fetchBalance(addr) {
+    const r = await fetch(ARC_RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc:'2.0', id:1, method:'eth_getBalance', params:[addr,'latest'] })
+    });
+    const d = await r.json();
+    return (parseInt(d.result, 16) / 1e6).toFixed(2);
+  }
+
+  // ─── MetaMask event listeners ───
+  if (window.ethereum) {
+    window.ethereum.on('accountsChanged', (accounts) => {
+      walletAddress = accounts[0] || null;
+      if (!walletAddress) {
+        renderWallet(null, null);
+      } else {
+        window.ethereum.request({ method: 'eth_chainId' }).then(c => renderWallet(walletAddress, c));
+      }
+    });
+    window.ethereum.on('chainChanged', (chainId) => {
+      if (walletAddress) {
+        renderWallet(walletAddress, chainId);
+        if (parseInt(chainId, 16) === ARC_CHAIN_ID_DEC) showToast('Connected', 'success');
+      }
+    });
   }
 
   // ─── Toast helper ───
@@ -1355,20 +1345,7 @@
     setTimeout(() => t.classList.remove('show'), 2800);
   }
 
-  // ─── Listen for account/chain changes ───
-  if (typeof window.ethereum !== 'undefined') {
-    window.ethereum.on('accountsChanged', (accounts) => {
-      if (accounts.length === 0) {
-        disconnectWallet();
-      } else {
-        walletAddress = accounts[0];
-        updateWalletUI();
-      }
-    });
-    window.ethereum.on('chainChanged', () => {
-      if (walletConnected) updateWalletUI();
-    });
-  }
+  // old listeners removed — new ones are in the MetaMask block above
 
 
 
