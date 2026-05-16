@@ -1012,15 +1012,20 @@
       const len  = decW(wIdx);
       if (!len || len > 10000) return '';
       const strHex = words.slice(wIdx + 1).join('').slice(0, len * 2);
-      try { return Buffer.from(strHex, 'hex').toString('utf8').replace(/ /g, ''); }
-      catch { return ''; }
+      try {
+        // Browser-compatible hex decode (no Buffer)
+        const bytes = new Uint8Array(strHex.match(/.{2}/g).map(b => parseInt(b, 16)));
+        return new TextDecoder('utf-8').decode(bytes);
+      } catch { return ''; }
     };
 
     const question = decStr(q_off);
     const category = decStr(c_off);
+
+    return { id: id_, creator, question, category, createdAt, deadline, state, result, yesPool, noPool, creatorFee };
   }
 
-    // ─── Get implied probability ───
+  // ─── Get implied probability ───
   async function fetchImpliedProb(id) {
     // getImpliedProbability(uint256) selector
     const selector = '0xecb62b6e';
