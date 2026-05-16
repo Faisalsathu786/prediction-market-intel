@@ -959,47 +959,68 @@
 
   // ─── Get single market ───
   async function fetchMarket(id) {
-    // getMarket(uint256) selector = keccak256('getMarket(uint256)')[0:4]
     const selector = '0xeb44fdd3';
     const data = selector + encUint(id);
     const res  = await ethCall(CONTRACT_ADDRESS, data);
     if (!res || res === '0x') return null;
 
-    // Decode: Market struct
-    // id, creator, question(str), category(str), createdAt, deadline, state, result, yesPool, noPool, creatorFee
-    // Skip first 32 bytes (tuple offset pointer = 0x20)
+    // Verified word layout from actual RPC response:
+    // Word 0  : outer tuple offset (0x20 = 32) — struct starts at byte 32
+    // Word 1  : id
+    // Word 2  : creator address
+    // Word 3  : question offset (bytes from struct start = 352)
+    // Word 4  : extra zero slot (ABI padding)
+    // Word 5  : category offset (bytes from struct start = 448)
+    // Word 6  : createdAt
+    // Word 7  : deadline
+    // Word 8  : state (enum)
+    // Word 9  : result (enum)
+    // Word 10 : yesPool
+    // Word 11 : noPool
+    // Word 12 : creatorFee
+    // Word 13 : question string length
+    // Word 14+: question string data
+    // Word 15 : category string length
+    // Word 16+: category string data
+    // Word 13 : question string length
+    // Word 14+: question string data
+    // Word N  : category string length
+    // Word N+1: category string data
+
+    const words = [];
     const raw = res.slice(2);
-    const hex = raw.slice(64); // skip the tuple offset word
+    for (let i = 0; i < raw.length; i += 64) words.push(raw.slice(i, i + 64));
 
-    const id_      = decUint(hex.slice(0,   64));
-    const creator  = '0x' + hex.slice(64 + 24, 64 + 64);
-    // String offsets are relative to start of struct data (after tuple offset)
-    const q_off    = decUint(hex.slice(128, 192)) * 2;
-    const c_off    = decUint(hex.slice(192, 256)) * 2;
-    const createdAt= decUint(hex.slice(256, 320));
-    const deadline = decUint(hex.slice(320, 384));
-    const state    = decUint(hex.slice(384, 448));
-    const result   = decUint(hex.slice(448, 512));
-    const yesPool  = decUint(hex.slice(512, 576));
-    const noPool   = decUint(hex.slice(576, 640));
-    const creatorFee = decUint(hex.slice(640, 704));
+    const decW = (idx) => decUint(words[idx] || '0'.repeat(64));
 
-    const decStr = (off) => {
-      const len = decUint(hex.slice(off, off + 64));
-      if (len === 0) return '';
-      const str = hex.slice(off + 64, off + 64 + len * 2);
-      try {
-        return decodeURIComponent(str.match(/.{2}/g).map(b => '%' + b).join(''));
-      } catch { return ''; }
+    const id_       = decW(1);
+    const creator   = '0x' + (words[2] || '').slice(24);
+    const q_off     = decW(3);  // bytes from struct start (word 1)
+    const c_off     = decW(5);  // bytes from struct start (word 1)
+    const createdAt = decW(6);
+    const deadline  = decW(7);
+    const state     = decW(8);
+    const result    = decW(9);
+    const yesPool   = decW(10);
+    const noPool    = decW(11);
+    const creatorFee = decW(12);
+
+    // String decode: struct starts at byte 32 (word 1)
+    // Absolute byte of string = 32 + off_bytes → absolute word = (32 + off_bytes) / 32
+    const decStr = (off_bytes) => {
+      const wIdx = Math.floor((32 + off_bytes) / 32);
+      const len  = decW(wIdx);
+      if (!len || len > 10000) return '';
+      const strHex = words.slice(wIdx + 1).join('').slice(0, len * 2);
+      try { return Buffer.from(strHex, 'hex').toString('utf8').replace(/ /g, ''); }
+      catch { return ''; }
     };
 
     const question = decStr(q_off);
     const category = decStr(c_off);
-
-    return { id: id_, creator, question, category, createdAt, deadline, state, result, yesPool, noPool, creatorFee };
   }
 
-  // ─── Get implied probability ───
+    // ─── Get implied probability ───
   async function fetchImpliedProb(id) {
     // getImpliedProbability(uint256) selector
     const selector = '0xecb62b6e';
